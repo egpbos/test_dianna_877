@@ -1,0 +1,33 @@
+name: dashboard
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  reproduce_dashboard_failure:
+    name: Reproduce dashboard CI failure from dianna-ai/dianna#882
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out DIANNA PR branch
+        uses: actions/checkout@v4
+        with:
+          repository: dianna-ai/dianna
+          ref: 0a2a1cbb43799fbc0aa4a668f9330ba6d8bc2ade
+
+      - name: Install Python and DIANNA (dev,dashboard)
+        uses: ./.github/actions/install-python-and-package
+        with:
+          python-version: "3.12"
+          extras-require: dev,dashboard
+
+      - name: Ensure browser is installed
+        run: python -m playwright install chromium
+
+      - name: Run dashboard tests
+        run: pytest -v -m dashboard --dashboard
