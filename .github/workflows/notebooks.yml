@@ -149,4 +149,8 @@ jobs:
         run: pip show torch transformers xgboost | grep -E "^(Name|Version):"
 
       - name: Run tutorial notebook
+        env:
+          OMP_NUM_THREADS: "1"
+          MKL_NUM_THREADS: "1"
+          TOKENIZERS_PARALLELISM: "false"
         run: pytest --nbmake --nbmake-timeout=600 tutorials/lime_text_eulaw.ipynb
