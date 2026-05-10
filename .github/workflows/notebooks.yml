@@ -139,11 +139,6 @@ jobs:
           python -m pip install \
             "dianna[notebooks] @ git+https://github.com/dianna-ai/dianna.git@install_openmp_readme"
 
-      # Workaround for xgboost OpenMP issue on macOS (see https://github.com/dmlc/xgboost/pull/12108).
-      # Mirrors the step in DIANNA's install_openmp_readme branch workflow.
-      - name: Install OpenMP runtime (macOS)
-        run: brew install libomp
-
       - name: Show installed package versions
         if: always()
         run: pip show torch transformers xgboost | grep -E "^(Name|Version):"
