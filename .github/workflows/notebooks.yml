@@ -139,6 +139,12 @@ jobs:
           python -m pip install \
             "dianna[notebooks] @ git+https://github.com/dianna-ai/dianna.git@install_openmp_readme"
 
+      # Pin xgboost < 3 to reproduce the environment in the failing job.
+      # xgboost 3.x introduced breaking API changes that may not be compatible
+      # with the model files used in this notebook.
+      - name: Pin xgboost < 3
+        run: python -m pip install "xgboost<3"
+
       # Workaround for xgboost OpenMP issue on macOS (see https://github.com/dmlc/xgboost/pull/12108).
       # Mirrors the step in DIANNA's install_openmp_readme branch workflow.
       - name: Install OpenMP runtime (macOS)
@@ -146,7 +152,7 @@ jobs:
 
       - name: Show installed package versions
         if: always()
-        run: pip show torch transformers xgboost spacy | grep -E "^(Name|Version):"
+        run: pip show torch transformers xgboost | grep -E "^(Name|Version):"
 
       - name: Run tutorial notebook
-        run: pytest --nbmake --nbmake-timeout=1800 tutorials/lime_text_eulaw.ipynb
+        run: pytest --nbmake --nbmake-timeout=600 tutorials/lime_text_eulaw.ipynb
